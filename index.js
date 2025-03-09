@@ -21,23 +21,23 @@ app.use(compression()); // ✅ Enable gzip compression
 
 // ✅ Nodemailer Configuration
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // ✅ Use a Gmail App Password
-  },
-  tls: {
-    rejectUnauthorized: false, // ✅ Prevent SSL issues
-  },
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS, // ✅ Use a Gmail App Password
+    },
+    tls: {
+        rejectUnauthorized: false, // ✅ Prevent SSL issues
+    },
 });
 
 // ✅ Email Sending Function
 async function sendConfirmationEmail(email, fullName, mobileNumber) {
-  const mailOptions = {
-    from: `"HackGenX" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: '🎉 Registration Successful - Hackathon!',
-    html: `
+    const mailOptions = {
+        from: `"HackGenX" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: '🎉 Registration Successful - Hackathon!',
+        html: `
       <h2>Hello ${fullName},</h2>
       <p>Thank you for registering for our hackathon! Here are your details:</p>
       <ul>
@@ -48,24 +48,77 @@ async function sendConfirmationEmail(email, fullName, mobileNumber) {
       <p>We look forward to seeing you there! 🚀</p>
       <p><strong>Regards,</strong><br>HackGenX Team</p>
     `,
-  };
+    };
 
-  try {
-    let info = await transporter.sendMail(mailOptions);
-    console.log('✅ Email sent:', info.response);
-    return true;
-  } catch (error) {
-    console.error('❌ Email sending failed:', error);
-    return false;
-  }
+    try {
+        let info = await transporter.sendMail(mailOptions);
+        console.log('✅ Email sent:', info.response);
+        return true;
+    } catch (error) {
+        console.error('❌ Email sending failed:', error);
+        return false;
+    }
 }
 
 // ✅ Test API
 app.get('/', (req, res) => {
-  res.send('API is working!');
+    res.send('API is working!');
 });
 
 // ✅ Register User & Send Email
+// app.post('/register', async (req, res) => {
+//     try {
+//         const {
+//             fullName,
+//             mobileNumber,
+//             email,
+//             collegeName,
+//             branch,
+//             city,
+//             problemStatement,
+//             reasonForParticipation,
+//         } = req.body;
+
+//         if (!fullName || !email || !mobileNumber) {
+//             return res.status(400).json({ error: 'Full Name, Email, and Mobile Number are required.' });
+//         }
+
+//         // ✅ Save to database
+//         const registerData = await prisma.registerData.create({
+//             data: {
+//                 fullName,
+//                 mobileNumber,
+//                 email,
+//                 collegeName,
+//                 branch,
+//                 city,
+//                 problemStatement,
+//                 reasonForParticipation,
+//             },
+//         });
+
+//         // ✅ Send confirmation email
+//         const emailSent = await sendConfirmationEmail(email, fullName, mobileNumber);
+//         if (!emailSent) {
+//             return res.status(500).json({ error: 'Registration successful, but email failed to send.' });
+//         }
+
+//         console.log(registerData, 'data');
+//         res.status(201).json({
+//             data: registerData,
+//             message: 'Registration successful! Thank you for registering for the hackathon.',
+//         });
+//     } catch (error) {
+//         if (error.code === 'P2002') {
+//             return res.status(400).json({
+//                 error: true,
+//                 message: 'Email already registered! Please use a different email.',
+//             });
+//         }
+//     });
+
+
+
 app.post('/register', async (req, res) => {
   try {
     const {
@@ -80,53 +133,82 @@ app.post('/register', async (req, res) => {
     } = req.body;
 
     if (!fullName || !email || !mobileNumber) {
-      return res.status(400).json({ error: 'Full Name, Email, and Mobile Number are required.' });
+      return res.status(400).json({ 
+        error: true, 
+        message: 'Full Name, Email, and Mobile Number are required.' 
+      });
     }
 
-    // ✅ Save to database
-    const registerData = await prisma.registerData.create({
-      data: {
-        fullName,
-        mobileNumber,
-        email,
-        collegeName,
-        branch,
-        city,
-        problemStatement,
-        reasonForParticipation,
-      },
-    });
+    // ✅ Save to database (Handle Unique Email Error)
+    try {
+      const registerData = await prisma.registerData.create({
+        data: {
+          fullName,
+          mobileNumber,
+          email,
+          collegeName,
+          branch,
+          city,
+          problemStatement,
+          reasonForParticipation,
+        },
+      });
 
-    // ✅ Send confirmation email
-    const emailSent = await sendConfirmationEmail(email, fullName, mobileNumber);
-    if (!emailSent) {
-      return res.status(500).json({ error: 'Registration successful, but email failed to send.' });
+      // ✅ Send confirmation email
+      const emailSent = await sendConfirmationEmail(email, fullName, mobileNumber);
+      if (!emailSent) {
+        return res.status(500).json({ 
+          error: true, 
+          message: 'Registration successful, but email failed to send.' 
+        });
+      }
+
+      res.status(201).json({
+        error: false,
+        message: 'Registration successful! Thank you for registering for the hackathon.',
+        data: registerData,
+      });
+    } catch (error) {
+      // ✅ Handle Unique Email Constraint Error
+      if (error.code === 'P2002') {
+        return res.status(400).json({
+          error: true,
+          message: 'Email already registered! Please use a different email.',
+        });
+      }
+
+      // ✅ Handle Any Other Prisma Error
+      console.error('❌ Prisma Error:', error);
+      return res.status(500).json({
+        error: true,
+        message: 'Something went wrong. Please try again later.',
+      });
     }
 
-    console.log(registerData, 'data');
-    res.status(201).json({
-      data: registerData,
-      message: 'Registration successful! Thank you for registering for the hackathon.',
-    });
   } catch (error) {
     console.error('❌ Registration Error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: true,
+      message: 'Failed to register. Please try again later.',
+    });
   }
 });
 
+
+
 // ✅ Get all Registrations
 app.get('/registrations', async (req, res) => {
-  try {
-    const registrations = await prisma.registerData.findMany();
-    res.status(200).json(registrations);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
+    try {
+        const registrations = await prisma.registerData.findMany();
+        res.status(200).json(registrations);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // ✅ Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
