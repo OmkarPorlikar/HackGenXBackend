@@ -1,0 +1,41 @@
+// schema.prisma
+
+// MongoDB datasource configuration
+// generator client {
+//   provider        = "prisma-client-js"
+//   output          = "./generated/prisma-client-js"
+//   binaryTargets = ["native", "rhel-openssl-1.0.x"]
+// }
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["debian-openssl-3.0.x"]
+}
+
+
+datasource db {
+provider = "mongodb"
+url = env("DATABASE_URL") 
+}
+// Name model to store basic name information
+model Name {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  firstName   String
+  lastName    String
+  middleName  String?
+  createdAt   DateTime @default(now())
+}
+
+// RegisterData model to store detailed registration info
+model RegisterData {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  fullName        String
+  mobileNumber    String
+  email           String @unique
+  collegeName     String
+  branch          String
+  city            String
+  problemStatement String
+  reasonForParticipation String
+  createdAt       DateTime @default(now())
+}
