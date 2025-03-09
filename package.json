@@ -7,11 +7,7 @@
   "scripts": {
   "start": "node index.js",
   "dev": "nodemon index.js",
-<<<<<<< HEAD
   "build": "npm install && npx prisma generate"
-=======
-  "build": "npm install && npx prisma generate && node index.js"
->>>>>>> b23cd98 (Fixed build and OpenSSL 3.0 issue)
 }
 ,
   "keywords": [],
