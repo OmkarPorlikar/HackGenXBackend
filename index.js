@@ -55,13 +55,14 @@ async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, te
         <p>1. <b>Screening Round (Online):</b> Prepare your detailed solution proposal for the selected problem statement. This is crucial for being shortlisted for the final round.</p>
         <p>2. <b>Submission Deadline:</b> Ensure you submit your proposal before <b>March 25, 2025</b>. Late submissions will not be considered.</p>
         <p>3. <b>Submission Process:</b> Send your presentation (PPT) to <a href="mailto:hackgenxx@gmail.com">hackgenxx@gmail.com</a> with the subject line: <i>"Screening Round - ${teamId} - ${teamName}"</i></p>
-        <p>4. <b>Announcement:</b> Shortlisted teams will be notified via email by <b>[Date]</b>.</p>
+        <p>4. <b>Announcement:</b> Shortlisted teams will be notified via email by <b> March 27, 2025</b>.</p>
 
         <h3>📅 Important Dates:</h3>
         <ul>
             <li><b>Submission Deadline:</b> March 25, 2025</li>
-            <li><b>Results Announcement:</b> [Insert Date]</li>
             <li><b>Final Round:</b> April 2nd - 3rd, 2025</li>
+            <li><b>Results Announcement:</b> April 3, 2025</li>
+            
         </ul>
 
         <h3>📢 How You'll Be Notified:</h3>
