@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 import helmet from "helmet";
 import compression from 'compression';
 
-
 dotenv.config(); // Load environment variables
 
 const app = express();
@@ -18,115 +17,193 @@ app.use(cors());
 app.use(helmet());
 app.use(compression()); // ✅ Enable gzip compression
 
-
 // ✅ Nodemailer Configuration
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // ✅ Use a Gmail App Password
-  },
-  tls: {
-    rejectUnauthorized: false, // ✅ Prevent SSL issues
-  },
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS, // ✅ Use a Gmail App Password
+    },
+    tls: {
+        rejectUnauthorized: false, // ✅ Prevent SSL issues
+    },
 });
 
-// ✅ Email Sending Function
-async function sendConfirmationEmail(email, fullName, mobileNumber) {
-  const mailOptions = {
-    from: `"HackGenX" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: '🎉 Registration Successful - Hackathon!',
-    html: `
-      <h2>Hello ${fullName},</h2>
-      <p>Thank you for registering for our hackathon! Here are your details:</p>
-      <ul>
-        <li><strong>Name:</strong> ${fullName}</li>
-        <li><strong>Email:</strong> ${email}</li>
-        <li><strong>Mobile:</strong> ${mobileNumber}</li>
-      </ul>
-      <p>We look forward to seeing you there! 🚀</p>
-      <p><strong>Regards,</strong><br>HackGenX Team</p>
-    `,
-  };
-
-  try {
-    let info = await transporter.sendMail(mailOptions);
-    console.log('✅ Email sent:', info.response);
-    return true;
-  } catch (error) {
-    console.error('❌ Email sending failed:', error);
-    return false;
-  }
+// ✅ Generate Unique Team ID (like HGX-492832)
+function generateTeamId() {
+    const randomNumber = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit random number
+    return `HGX-${randomNumber}`;
 }
 
-// ✅ Test API
-app.get('/', (req, res) => {
-  res.send('API is working!');
-});
+// ✅ Email Sending Function
+async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, problemStatement, teamId) {
+    const mailOptions = {
+        from: `"HackGenX" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: '✅ Registration Confirmation - Hack GenX Hackathon 2025',
+        html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; padding: 20px;">
+        <h2 style="color: #4CAF50;">🎉 Thank you for registering for Hack GenX Hackathon 2025!</h2>
+        <p>Hello <b>${fullName}</b>,</p>
+        <p>We are thrilled to inform you that your team <b>${teamName}</b> has been successfully registered for <b>Hack GenX 2025</b>.</p>
 
-// ✅ Register User & Send Email
+        <h3>📜 <u>Registration Details</u></h3>
+        <p><strong>Registration Number:</strong> <b>${teamId}</b></p>
+        <p><strong>Problem Statement Selected:</strong> ${problemStatement}</p>
+
+        <h3>📝 Next Steps:</h3>
+        <p>1. <b>Screening Round (Online):</b> Prepare your detailed solution proposal for the selected problem statement. This is crucial for being shortlisted for the final round.</p>
+        <p>2. <b>Submission Deadline:</b> Ensure you submit your proposal before <b>March 25, 2025</b>. Late submissions will not be considered.</p>
+        <p>3. <b>Submission Process:</b> Send your presentation (PPT) to <a href="mailto:hackgenxx@gmail.com">hackgenxx@gmail.com</a> with the subject line: <i>"Screening Round - ${teamId} - ${teamName}"</i></p>
+        <p>4. <b>Announcement:</b> Shortlisted teams will be notified via email by <b>[Date]</b>.</p>
+
+        <h3>📅 Important Dates:</h3>
+        <ul>
+            <li><b>Submission Deadline:</b> March 25, 2025</li>
+            <li><b>Results Announcement:</b> [Insert Date]</li>
+            <li><b>Final Round:</b> April 2nd - 3rd, 2025</li>
+        </ul>
+
+        <h3>📢 How You'll Be Notified:</h3>
+        <p>We will notify the finalists via:</p>
+        <ul>
+            <li>Email to the Team Leader.</li>
+            <li>Official Website Announcement.</li>
+            <li>Direct Phone Call to the Team Leader.</li>
+        </ul>
+
+        <h3>💬 Need Assistance?</h3>
+        <p>If you have any questions, feel free to contact us:</p>
+        <ul>
+            <li>Email: <a href="mailto:hackgenxx@gmail.com">hackgenxx@gmail.com</a></li>
+            <li>Phone: +919307959202, +919021606508</li>
+            <li>Website: <a href="http://hackgenx.ipapo.in" target="_blank">http://hackgenx.ipapo.in</a></li>
+        </ul>
+
+        <hr>
+        <p style="color: #666; font-size: 12px;">Best Regards,<br><strong>The Hack GenX Team</strong></p>
+        </div>
+        `,
+    };
+
+    try {
+        let info = await transporter.sendMail(mailOptions);
+        console.log('✅ Email sent:', info.response);
+        return true;
+    } catch (error) {
+        console.error('❌ Email sending failed:', error);
+        return false;
+    }
+}
+
+// ✅ Register API
 app.post('/register', async (req, res) => {
-  try {
-    const {
-      fullName,
-      mobileNumber,
-      email,
-      collegeName,
-      branch,
-      city,
-      problemStatement,
-      reasonForParticipation,
-    } = req.body;
+    try {
+        const {
+            fullName,
+            mobileNumber,
+            email,
+            collegeName,
+            branch,
+            city,
+            problemStatement,
+            reasonForParticipation,
+            teamName,
+            teamSize
+        } = req.body;
 
-    if (!fullName || !email || !mobileNumber) {
-      return res.status(400).json({ error: 'Full Name, Email, and Mobile Number are required.' });
+        if (!fullName || !email || !mobileNumber || !teamName) {
+            return res.status(400).json({
+                error: true,
+                message: 'Full Name, Email, Mobile Number, and Team Name are required.'
+            });
+        }
+
+        // ✅ Generate a Unique Team ID
+        let teamId = generateTeamId();
+        let isUnique = false;
+
+        // ✅ Ensure the Team ID is Unique
+        while (!isUnique) {
+            const existingTeam = await prisma.registerData.findUnique({
+                where: { email: email }
+            });
+
+            if (!existingTeam) {
+                isUnique = true;
+            } else {
+                teamId = generateTeamId(); // Generate again if already exists
+            }
+        }
+
+        // ✅ Save to Database
+        const registerData = await prisma.registerData.create({
+            data: {
+                fullName,
+                mobileNumber,
+                email,
+                collegeName,
+                branch,
+                city,
+                problemStatement,
+                reasonForParticipation,
+                teamName,
+                teamSize,
+                teamId
+            }
+        });
+
+        // ✅ Send Confirmation Email
+        const emailSent = await sendConfirmationEmail(
+            email,
+            fullName,
+            mobileNumber,
+            teamName,
+            problemStatement,
+            teamId
+        );
+
+        if (!emailSent) {
+            return res.status(500).json({
+                error: true,
+                message: 'Registration successful, but email failed to send.'
+            });
+        }
+
+        res.status(201).json({
+            error: false,
+            message: 'Registration successful! Thank you for registering for the hackathon.',
+            data: registerData
+        });
+    } catch (error) {
+        if (error.code === 'P2002') {
+            return res.status(400).json({
+                error: true,
+                message: 'Email already registered! Please use a different email.'
+            });
+        }
+
+        console.error('❌ Registration Error:', error);
+        res.status(500).json({
+            error: true,
+            message: 'Something went wrong. Please try again later.'
+        });
     }
-
-    // ✅ Save to database
-    const registerData = await prisma.registerData.create({
-      data: {
-        fullName,
-        mobileNumber,
-        email,
-        collegeName,
-        branch,
-        city,
-        problemStatement,
-        reasonForParticipation,
-      },
-    });
-
-    // ✅ Send confirmation email
-    const emailSent = await sendConfirmationEmail(email, fullName, mobileNumber);
-    if (!emailSent) {
-      return res.status(500).json({ error: 'Registration successful, but email failed to send.' });
-    }
-
-    console.log(registerData, 'data');
-    res.status(201).json({
-      data: registerData,
-      message: 'Registration successful! Thank you for registering for the hackathon.',
-    });
-  } catch (error) {
-    console.error('❌ Registration Error:', error);
-    res.status(500).json({ error: error.message });
-  }
 });
 
-// ✅ Get all Registrations
+// ✅ Get All Registrations
 app.get('/registrations', async (req, res) => {
-  try {
-    const registrations = await prisma.registerData.findMany();
-    res.status(200).json(registrations);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
+    try {
+        const registrations = await prisma.registerData.findMany();
+        res.status(200).json(registrations);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // ✅ Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });

@@ -36,6 +36,9 @@ model RegisterData {
   branch          String
   city            String
   problemStatement String
+  teamId String
+  teamName String 
+  teamSize String
   reasonForParticipation String
   createdAt       DateTime @default(now())
 }
