@@ -36,7 +36,7 @@ function generateTeamId() {
 }
 
 // ✅ Email Sending Function
-async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, problemStatement, teamId) {
+async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, teamSize, problemStatement, teamId) {
     const mailOptions = {
         from: `"HackGenX" <${process.env.EMAIL_USER}>`,
         to: email,
@@ -45,7 +45,7 @@ async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, pr
         <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; padding: 20px;">
         <h2 style="color: #4CAF50;">🎉 Thank you for registering for Hack GenX Hackathon 2025!</h2>
         <p>Hello <b>${fullName}</b>,</p>
-        <p>We are thrilled to inform you that your team <b>${teamName}</b> has been successfully registered for <b>Hack GenX 2025</b>.</p>
+        <p>We are thrilled to inform you that your team <b>${teamName}</b> (${teamSize}) has been successfully registered for <b>Hack GenX 2025</b>.</p>
 
         <h3>📜 <u>Registration Details</u></h3>
         <p><strong>Registration Number:</strong> <b>${teamId}</b></p>
@@ -159,6 +159,7 @@ app.post('/register', async (req, res) => {
             fullName,
             mobileNumber,
             teamName,
+            teamSize,
             problemStatement,
             teamId
         );
@@ -193,13 +194,13 @@ app.post('/register', async (req, res) => {
 
 // ✅ Get All Registrations
 app.get('/registrations', async (req, res) => {
-    try {
-        const registrations = await prisma.registerData.findMany();
-        res.status(200).json(registrations);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
-    }
+      try {
+            const registrations = await prisma.registerData.findMany();
+            res.status(200).json(registrations);
+      } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: error.message });
+      }
 });
 
 // ✅ Start Server
