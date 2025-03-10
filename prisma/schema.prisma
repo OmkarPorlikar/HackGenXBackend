@@ -37,7 +37,7 @@ model RegisterData {
   city            String
   problemStatement String
   teamId String
-  teamName String 
+  teamName String @unique
   teamSize String
   reasonForParticipation String
   createdAt       DateTime @default(now())
