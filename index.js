@@ -11,6 +11,7 @@ dotenv.config(); // Load environment variables
 
 const app = express();
 const prisma = new PrismaClient();
+var errorMessage = ''
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -40,12 +41,12 @@ async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, te
     const mailOptions = {
         from: `"HackGenX" <${process.env.EMAIL_USER}>`,
         to: email,
-        subject: '✅ Registration Confirmation - HackGenX Hackathon 2025',
+        subject: '✅ Registration Confirmation - Hack GenX Hackathon 2025',
         html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; padding: 20px;">
-        <h2 style="color: #4CAF50;">🎉 Thank you for registering for HackGenX Hackathon 2025!</h2>
+        <h2 style="color: #4CAF50;">🎉 Thank you for registering for Hack GenX Hackathon 2025!</h2>
         <p>Hello <b>${fullName}</b>,</p>
-        <p>We are thrilled to inform you that your team <b>${teamName}</b> (${teamSize}) has been successfully registered for <b>HackGenX 2025</b>.</p>
+        <p>We are thrilled to inform you that your team <b>${teamName}</b> (${teamSize}) has been successfully registered for <b>Hack GenX 2025</b>.</p>
 
         <h3>📜 <u>Registration Details</u></h3>
         <p><strong>Registration Number:</strong> <b>${teamId}</b></p>
@@ -55,14 +56,13 @@ async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, te
         <p>1. <b>Screening Round (Online):</b> Prepare your detailed solution proposal for the selected problem statement. This is crucial for being shortlisted for the final round.</p>
         <p>2. <b>Submission Deadline:</b> Ensure you submit your proposal before <b>March 25, 2025</b>. Late submissions will not be considered.</p>
         <p>3. <b>Submission Process:</b> Send your presentation (PPT) to <a href="mailto:hackgenxx@gmail.com">hackgenxx@gmail.com</a> with the subject line: <i>"Screening Round - ${teamId} - ${teamName}"</i></p>
-        <p>4. <b>Announcement:</b> Shortlisted teams will be notified via email by <b> March 27, 2025</b>.</p>
+        <p>4. <b>Announcement:</b> Shortlisted teams will be notified via email by <b>[Date]</b>.</p>
 
         <h3>📅 Important Dates:</h3>
         <ul>
             <li><b>Submission Deadline:</b> March 25, 2025</li>
+            <li><b>Results Announcement:</b> [Insert Date]</li>
             <li><b>Final Round:</b> April 2nd - 3rd, 2025</li>
-            <li><b>Results Announcement:</b> April 3, 2025</li>
-            
         </ul>
 
         <h3>📢 How You'll Be Notified:</h3>
@@ -82,7 +82,7 @@ async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, te
         </ul>
 
         <hr>
-        <p style="color: #666; font-size: 12px;">Best Regards,<br><strong>The HackGenX Team</strong></p>
+        <p style="color: #666; font-size: 12px;">Best Regards,<br><strong>The Hack GenX Team</strong></p>
         </div>
         `,
     };
@@ -122,20 +122,52 @@ app.post('/register', async (req, res) => {
 
         // ✅ Generate a Unique Team ID
         let teamId = generateTeamId();
+        // let isUnique = false;
+
+        // // ✅ Ensure the Team ID is Unique
+        // while (!isUnique) {
+        //     const existingTeam = await prisma.registerData.findUnique({
+        //         where: { email: email }
+        //     });
+
+        //     if (!existingTeam) {
+        //         isUnique = true;
+        //     } else {
+        //         teamId = generateTeamId(); // Generate again if already exists
+        //     }
+        // }
+
+
         let isUnique = false;
 
-        // ✅ Ensure the Team ID is Unique
         while (!isUnique) {
-            const existingTeam = await prisma.registerData.findUnique({
+            // Check if email already exists
+            const existingEmail = await prisma.registerData.findUnique({
                 where: { email: email }
             });
-
-            if (!existingTeam) {
-                isUnique = true;
-            } else {
-                teamId = generateTeamId(); // Generate again if already exists
+        
+            // Check if teamName already exists
+            const existingTeamName = await prisma.registerData.findUnique({
+                where: { teamName: teamName }
+            });
+        
+            if (existingEmail) {
+                errorMessage = "Email already exists. Please use another email";
+                console.log("❌ Email already exists. Please use another email.");
+                break;
             }
+        
+            if (existingTeamName) {
+                errorMessage = " Team name already exists. Please choose another team name"
+                console.log("❌ Team name already exists. Please choose another team name.");
+                break;
+            }
+        
+            // If both are unique, mark as true
+            isUnique = true;
         }
+        
+
 
         // ✅ Save to Database
         const registerData = await prisma.registerData.create({
@@ -181,7 +213,7 @@ app.post('/register', async (req, res) => {
         if (error.code === 'P2002') {
             return res.status(400).json({
                 error: true,
-                message: 'Email already registered! Please use a different email.'
+                message: errorMessage
             });
         }
 
@@ -193,6 +225,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
+// ✅ Get All Registrations
 // ✅ Get All Registrations
 app.get('/registrations', async (req, res) => {
       try {
