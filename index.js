@@ -40,12 +40,12 @@ async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, te
     const mailOptions = {
         from: `"HackGenX" <${process.env.EMAIL_USER}>`,
         to: email,
-        subject: '✅ Registration Confirmation - Hack GenX Hackathon 2025',
+        subject: '✅ Registration Confirmation - HackGenX Hackathon 2025',
         html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; padding: 20px;">
-        <h2 style="color: #4CAF50;">🎉 Thank you for registering for Hack GenX Hackathon 2025!</h2>
+        <h2 style="color: #4CAF50;">🎉 Thank you for registering for HackGenX Hackathon 2025!</h2>
         <p>Hello <b>${fullName}</b>,</p>
-        <p>We are thrilled to inform you that your team <b>${teamName}</b> (${teamSize}) has been successfully registered for <b>Hack GenX 2025</b>.</p>
+        <p>We are thrilled to inform you that your team <b>${teamName}</b> (${teamSize}) has been successfully registered for <b>HackGenX 2025</b>.</p>
 
         <h3>📜 <u>Registration Details</u></h3>
         <p><strong>Registration Number:</strong> <b>${teamId}</b></p>
@@ -81,7 +81,7 @@ async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, te
         </ul>
 
         <hr>
-        <p style="color: #666; font-size: 12px;">Best Regards,<br><strong>The Hack GenX Team</strong></p>
+        <p style="color: #666; font-size: 12px;">Best Regards,<br><strong>The HackGenX Team</strong></p>
         </div>
         `,
     };
