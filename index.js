@@ -186,6 +186,13 @@ app.post('/register', async (req, res) => {
             }
         });
 
+     res.status(201).json({
+            error: false,
+            message: 'Registration successful! Thank you for registering for the hackathon.',
+            data: registerData
+        });
+        
+
         // ✅ Send Confirmation Email
         const emailSent = await sendConfirmationEmail(
             email,
@@ -204,11 +211,7 @@ app.post('/register', async (req, res) => {
             });
         }
 
-        res.status(201).json({
-            error: false,
-            message: 'Registration successful! Thank you for registering for the hackathon.',
-            data: registerData
-        });
+
     } catch (error) {
         if (error.code === 'P2002') {
             return res.status(400).json({
