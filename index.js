@@ -99,6 +99,8 @@ function generateTeamId() {
 
 
 
+
+
 async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, teamSize, problemStatement, teamId) {
     const mailOptions = {
         from: `"HackGenX" <${process.env.EMAIL_USER}>`,
@@ -207,28 +209,28 @@ app.post('/register', async (req, res) => {
             const existingEmail = await prisma.registerData.findUnique({
                 where: { email: email }
             });
-        
+
             // Check if teamName already exists
             const existingTeamName = await prisma.registerData.findUnique({
                 where: { teamName: teamName }
             });
-        
+
             if (existingEmail) {
                 errorMessage = "Email already exists. Please use another email";
                 console.log("❌ Email already exists. Please use another email.");
                 break;
             }
-        
+
             if (existingTeamName) {
                 errorMessage = " Team name already exists. Please choose another team name"
                 console.log("❌ Team name already exists. Please choose another team name.");
                 break;
             }
-        
+
             // If both are unique, mark as true
             isUnique = true;
         }
-        
+
 
 
         // ✅ Save to Database
@@ -271,7 +273,7 @@ app.post('/register', async (req, res) => {
             });
         }
 
-      
+
     } catch (error) {
         if (error.code === 'P2002') {
             return res.status(400).json({
@@ -290,15 +292,114 @@ app.post('/register', async (req, res) => {
 
 
 
+
+
+async function MasterClassesMail(email, fullName, classes) {
+    const mailOptions =
+    {
+        from: `"HackGenX" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: '✅ MasterClass Registration Confirmation - HackGenX 2025',
+        html: ` <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; padding: 20px;">     
+         <h2 style="color: #4CAF50;">🎉 Thank you for registering for HackGenX MasterClasses 2025!</h2>      
+           <p>Hello <b>${fullName}</b>,</p>     
+            <p>We are excited to inform you that you have successfully registered for the following master classes:</p>    <ul>
+            ${classes.map(cls => `<li><b>${cls}</b></li>`).join('')}        </ul>     
+               <h3>📅 Session Details:</h3>      
+                 <p>MasterClasses will cover essential topics to enhance your knowledge and skills for the Hackathon.</p>     
+                    <p>Stay tuned for the detailed schedule, which will be shared with you soon.</p>     
+                       <h3>💬 Need Assistance?</h3>     
+                          <p>If you have any questions, feel free to contact us:</p>  
+                             <ul>         <li>Email: <a href="mailto:hackgenxx@gmail.com">hackgenxx@gmail.com</a></li>      
+                                   <li>Phone: +919307959202, +919021606508</li>         
+                                      <li>Website: <a href="http://hackgenx.ipapo.in" target="_blank">http://hackgenx.ipapo.in</a></li>  
+                                            </ul>      
+                                              <hr>      
+                                                <p style="color: #666; font-size: 12px;">Best Regards,<br><strong>The HackGenX Team</strong></p>     
+                                                   </div>        `,
+    };
+    try {
+        let info = await transporter.sendMail(mailOptions);
+        console.log('✅ Email sent:', info.response);
+        return true;
+    }
+    catch (error) {
+        console.error('❌ Email sending failed:', error); return false;
+    }
+}
+
+app.post('/register-masterclass', async (req, res) => {
+    try {
+        const { fullName, mobileNumber, email, age, classes, exp } = req.body;
+
+        // Validate required fields
+        if (!fullName || !email || !mobileNumber || !classes || !age) {
+            return res.status(400).json({
+                error: true,
+                message: 'Full Name, Email, Mobile Number, Age, and Classes are required.'
+            });
+        }
+
+        // Check if email or mobile number already exists
+        const existingUser = await prisma.registerMasterClass.findFirst({
+            where: {
+                OR: [
+                    { email: email },
+                    { mobileNumber: mobileNumber }
+                ]
+            }
+        });
+
+        if (existingUser) {
+            return res.status(400).json({
+                error: true,
+                message: 'Email or Mobile Number already registered.'
+            });
+        }
+
+        // Save to Database
+        const registerData = await prisma.registerMasterClass.create({
+            data: { fullName, mobileNumber, email, age, classes, exp }
+        });
+
+
+        res.status(201).json({
+            error: false,
+            message: 'Registration successful! Check your email for confirmation.',
+            data: registerData
+        });
+
+        // Send Confirmation Email
+        const emailSent = await MasterClassesMail(email, fullName, classes);
+        if (!emailSent) {
+            return res.status(500).json({
+                error: true,
+                message: 'Registration successful, but email failed to send.'
+            });
+        }
+    } catch (error) {
+        console.error('❌ Registration Error:', error);
+        res.status(500).json({
+            error: true,
+            message: 'Something went wrong. Please try again later.'
+        });
+    }
+});
+
+
+
+
+
+
 // ✅ Get All Registrations
 app.get('/registrations', async (req, res) => {
-      try {
-            const registrations = await prisma.registerData.findMany();
-            res.status(200).json(registrations);
-      } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: error.message });
-      }
+    try {
+        const registrations = await prisma.registerData.findMany();
+        res.status(200).json(registrations);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // ✅ Start Server
