@@ -78,7 +78,7 @@ function generateTeamId() {
 //         <ul>
 //             <li>Email: <a href="mailto:hackgenxx@gmail.com">hackgenxx@gmail.com</a></li>
 //             <li>Phone: +919307959202, +919021606508</li>
-//             <li>Website: <a href="http://hackgenx.ipapo.in" target="_blank">http://hackgenx.ipapo.in</a></li>
+//             <li>Website: <a href="https://hackgenx.ipapo.in" target="_blank">http://hackgenx.ipapo.in</a></li>
 //         </ul>
 
 //         <hr>
@@ -142,7 +142,7 @@ async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, te
         <ul>
             <li>Email: <a href="mailto:hackgenxx@gmail.com">hackgenxx@gmail.com</a></li>
             <li>Phone: +919307959202, +919021606508</li>
-            <li>Website: <a href="http://hackgenx.ipapo.in" target="_blank">http://hackgenx.ipapo.in</a></li>
+            <li>Website: <a href="https://hackgenx.ipapo.in" target="_blank">http://hackgenx.ipapo.in</a></li>
         </ul>
 
         <hr>
