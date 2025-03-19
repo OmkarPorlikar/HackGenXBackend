@@ -313,7 +313,6 @@ async function MasterClassesMail(email, fullName, classes) {
         html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
             <div style="text-align: center;">
-                // <img src="https://hackgenx.ipapo.in/hackgenx_logo.png" alt="HackGenX Logo" style="max-width: 150px;">
                 <h2 style="color: #4CAF50; margin-top: 10px;">🎉 Welcome to HackGenX MasterClasses 2025!</h2>
             </div>
 
