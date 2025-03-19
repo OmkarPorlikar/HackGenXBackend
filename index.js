@@ -41,6 +41,14 @@ function generateTeamId() {
     return `HGX-${randomNumber}`;
 }
 
+
+// Home Route
+app.get("/", (req, res) => {
+    res.json({ message: "Welcome to the Home Page!" });
+});
+
+
+
 // ✅ Email Sending Function
 // async function sendConfirmationEmail(email, fullName, mobileNumber, teamName, teamSize, problemStatement, teamId) {
 //     const mailOptions = {
