@@ -37,8 +37,21 @@ model RegisterData {
   city            String
   problemStatement String
   teamId String
-  teamName String 
+  teamName String @unique
   teamSize String
   reasonForParticipation String
   createdAt       DateTime @default(now())
+}
+
+
+model RegisterMasterClass {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName     String
+  mobileNumber String
+  email        String   @unique
+  age          String
+  classes      String[] // Changed 'Array' to 'String[]' for an array of strings
+  exp          String
+  otherClasses         String
+  createdAt    DateTime @default(now())
 }
