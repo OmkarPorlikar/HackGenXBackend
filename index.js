@@ -296,68 +296,6 @@ app.post('/register', async (req, res) => {
 
 
 
-// async function MasterClassesMail(email, fullName, classes) {
-//     const mailOptions = {
-//         from: `"HackGenX" <${process.env.EMAIL_USER}>`,
-//         to: email,
-//         subject: '🎉 Confirmation of Your Master Class Registration – HackGenX 2025',
-//         html: `
-//         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
-//             <div style="text-align: center;">
-//                 <img src="https://hackgenx.ipapo.in/hackgenx_logo.png" alt="HackGenX Logo" style="max-width: 150px;">
-//                 <h2 style="color: #4CAF50; margin-top: 10px;">🎉 Welcome to HackGenX MasterClasses 2025!</h2>
-//             </div>
-
-//             <p style="font-size: 16px; color: #333;">Dear <strong>${fullName}</strong>,</p>
-//             <p style="font-size: 16px; color: #333;">
-//                 Thank you for registering for the Master Class at <strong>HackGenX</strong> – The Ultimate Arena for Innovators! 
-//                 We are thrilled to have you onboard for this exciting learning experience.
-//             </p>
-
-//             <h3 style="color: #333;">📌 Registration Details:</h3>
-//             <ul style="font-size: 16px; color: #555; padding-left: 20px;">
-//                 <li><strong>Participant Name:</strong> ${fullName}</li>
-//                 <li><strong>Master Class Domain:</strong> ${classes.map(cls => `<b>${cls}</b>`).join(', ')}</li>
-//                 <li><strong>Registration Status:</strong> ✅ Confirmed</li>
-//             </ul>
-
-//             <h3 style="color: #333;">📅 Event Details:</h3>
-//             <ul style="font-size: 16px; color: #555; padding-left: 20px;">
-//                 <li><strong>📍 Venue:</strong> Sipna College of Engineering & Technology, In front of Nemani Godown, Badnera Road, Amravati - 444701</li>
-//                 <li><strong>📅 HackGenX Registration Period:</strong> March 17 – April 5</li>
-//             </ul>
-
-//             <h3 style="color: #333;">⏭️ What’s Next?</h3>
-//             <p style="font-size: 16px; color: #333;">
-//                 The schedule for your master class in the domain of <strong>${classes.map(cls => `<b>${cls}</b>`).join(', ')}</strong> will be shared via email soon. Stay tuned for updates!
-//             </p>
-
-//             <h3 style="color: #333;">🔗 More Information:</h3>
-//             <p style="font-size: 16px; color: #333;">
-//                 For more details, visit our website: <a href="https://hackgenx.ipapo.in" style="color: #4CAF50; text-decoration: none;"><strong>hackgenx.ipapo.in</strong></a>
-//             </p>
-
-//             <h3 style="color: #333;">📩 Need Assistance?</h3>
-//             <p style="font-size: 16px; color: #333;">
-//                 If you have any queries, feel free to reach out to us at 
-//                 <a href="mailto:hackgenxx@gmail.com" style="color: #4CAF50; text-decoration: none;"><strong>hackgenxx@gmail.com</strong></a>.
-//             </p>
-
-//             <hr style="border: 1px solid #ddd; margin-top: 20px;">
-//             <p style="font-size: 14px; color: #666; text-align: center;">Best Regards, <br><strong>HackGenX Team</strong></p>
-//         </div>`,
-//     };
-
-//     try {
-//         let info = await transporter.sendMail(mailOptions);
-//         console.log('✅ Email sent:', info.response);
-//         return true;
-//     } catch (error) {
-//         console.error('❌ Email sending failed:', error);
-//         return false;
-//     }
-// }
-
 
 async function MasterClassesMail(email, fullName, classes) {
     const mailOptions = {
@@ -367,7 +305,7 @@ async function MasterClassesMail(email, fullName, classes) {
         html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
             <div style="text-align: center;">
-                <img src="cid:logo" alt="HackGenX Logo" style="max-width: 150px;">
+                <img src="https://hackgenx.ipapo.in/hackgenx_logo.png" alt="HackGenX Logo" style="max-width: 150px;">
                 <h2 style="color: #4CAF50; margin-top: 10px;">🎉 Welcome to HackGenX MasterClasses 2025!</h2>
             </div>
 
@@ -409,13 +347,6 @@ async function MasterClassesMail(email, fullName, classes) {
             <hr style="border: 1px solid #ddd; margin-top: 20px;">
             <p style="font-size: 14px; color: #666; text-align: center;">Best Regards, <br><strong>HackGenX Team</strong></p>
         </div>`,
-        attachments: [
-            {
-                filename: "hackgenx_logo.png",
-                path: "./hackgenx_logo.png", // Path to your logo file
-                cid: "logo", // Same CID as in the HTML
-            },
-        ],
     };
 
     try {
@@ -427,6 +358,8 @@ async function MasterClassesMail(email, fullName, classes) {
         return false;
     }
 }
+
+
 
 
 app.post('/register-masterclass', async (req, res) => {
