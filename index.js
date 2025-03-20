@@ -443,6 +443,35 @@ console.log(emailSent , "email sent");
 
 
 
+app.post('/login' , async (req , res)=>{
+const {email , password} =  req.body;
+
+try {
+
+    const existingUser = await prisma.login.findUnique({ where:{email:email} });
+
+    if(!existingUser){ res.status(404).json({ message:'User Not Found' })}
+
+    if(existingUser.password !== password){
+        res.status(403).json({ message: 'Password Incorrect' })
+    }
+
+
+    res.json({
+        data:existingUser , 
+        message: 'Login successful' 
+    })
+
+}
+catch(error){
+
+    console.log("❌❌ error occured" , error);
+res.status(500).json ({message:'Internal server error'})
+
+}
+
+})
+
 
 
 app.get('/getRegistrations', async (req, res) => {
