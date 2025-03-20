@@ -55,3 +55,11 @@ model RegisterMasterClass {
   otherClasses         String
   createdAt    DateTime @default(now())
 }
+
+
+
+model Login {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId 
+  userName String @unique 
+  password String
+}
