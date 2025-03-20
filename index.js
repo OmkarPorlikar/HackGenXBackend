@@ -445,10 +445,20 @@ console.log(emailSent , "email sent");
 
 
 
-// ✅ Get All Registrations
-app.get('/registrations', async (req, res) => {
+app.get('/getRegistrations', async (req, res) => {
     try {
         const registrations = await prisma.registerData.findMany();
+        res.status(200).json(registrations);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+app.get('/getMasterClass', async (req, res) => {
+    try {
+        const registrations = await prisma.registerMasterClass.findMany();
         res.status(200).json(registrations);
     } catch (error) {
         console.error(error);
