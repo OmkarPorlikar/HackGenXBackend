@@ -444,11 +444,11 @@ console.log(emailSent , "email sent");
 
 
 app.post('/login' , async (req , res)=>{
-const {email , password} =  req.body;
+const {userName , password} =  req.body;
 
 try {
 
-    const existingUser = await prisma.login.findUnique({ where:{email:email} });
+    const existingUser = await prisma.login.findUnique({ where:{userName:userName} });
 
     if(!existingUser){ res.status(404).json({ message:'User Not Found' })}
 
