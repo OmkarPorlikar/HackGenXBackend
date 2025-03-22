@@ -8,41 +8,40 @@
 // }
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["debian-openssl-3.0.x"]
 }
 
-
 datasource db {
-provider = "mongodb"
-url = env("DATABASE_URL") 
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
+
 // Name model to store basic name information
 model Name {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  firstName   String
-  lastName    String
-  middleName  String?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName  String
+  lastName   String
+  middleName String?
+  createdAt  DateTime @default(now())
 }
 
 // RegisterData model to store detailed registration info
 model RegisterData {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
-  fullName        String
-  mobileNumber    String
-  email           String @unique
-  collegeName     String
-  branch          String
-  city            String
-  problemStatement String
-  teamId String
-  teamName String @unique
-  teamSize String
+  id                     String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName               String
+  mobileNumber           String
+  email                  String   @unique
+  collegeName            String
+  branch                 String
+  city                   String
+  problemStatement       String
+  teamId                 String
+  teamName               String   @unique
+  teamSize               String
   reasonForParticipation String
-  createdAt       DateTime @default(now())
+  createdAt              DateTime @default(now())
 }
-
 
 model RegisterMasterClass {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -50,16 +49,16 @@ model RegisterMasterClass {
   mobileNumber String
   email        String   @unique
   age          String
+  city         String
+  collegeName  String
   classes      String[] // Changed 'Array' to 'String[]' for an array of strings
   exp          String
-  otherClasses         String
+  otherClasses String
   createdAt    DateTime @default(now())
 }
 
-
-
 model Login {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId 
-  userName String @unique 
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  userName String @unique
   password String
 }
