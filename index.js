@@ -456,9 +456,10 @@ try {
         res.status(403).json({ message: 'Password Incorrect' })
     }
 
-
+    // Exclude password from response
+        const { password: _, ...userWithoutPassword } = existingUser;
     res.json({
-        data:existingUser , 
+        data:userWithoutPassword, 
         message: 'Login successful' 
     })
 
