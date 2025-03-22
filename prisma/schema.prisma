@@ -49,13 +49,14 @@ model RegisterMasterClass {
   mobileNumber String
   email        String   @unique
   age          String
-  city         String
-  collegeName  String
+  city         String?
+  collegeName  String?
   classes      String[] // Changed 'Array' to 'String[]' for an array of strings
   exp          String
   otherClasses String
   createdAt    DateTime @default(now())
 }
+
 
 model Login {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
