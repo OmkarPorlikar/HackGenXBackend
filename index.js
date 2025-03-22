@@ -338,7 +338,7 @@ app.post('/register-masterclass', async (req, res) => {
                 email, 
                 age : age && age.trim() !== "" ? age : 'none',
                 collegeName ,
-                city,
+                city: city || "Unknown", // Provide a default value if city is null
                 classes, 
                 exp , 
                 otherClasses 
