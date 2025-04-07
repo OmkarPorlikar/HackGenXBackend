@@ -27,6 +27,27 @@ model Name {
 }
 
 // RegisterData model to store detailed registration info
+
+
+// model RegisterData {
+//   id                     String   @id @default(auto()) @map("_id") @db.ObjectId
+//   fullName               String
+//   mobileNumber           String
+//   email                  String   @unique
+//   collegeName            String
+//   branch                 String
+//   city                   String
+//   problemStatement       String
+//   teamId                 String   @unique
+//   teamName               String   @unique
+//   teamSize               String
+//   reasonForParticipation String
+//   createdAt              DateTime @default(now())
+
+//   // Relation to PPTStatus
+//   pptStatus PPTStatus? 
+// }
+
 model RegisterData {
   id                     String   @id @default(auto()) @map("_id") @db.ObjectId
   fullName               String
@@ -36,12 +57,18 @@ model RegisterData {
   branch                 String
   city                   String
   problemStatement       String
-  teamId                 String
+  teamId                 String   @unique
   teamName               String   @unique
   teamSize               String
   reasonForParticipation String
   createdAt              DateTime @default(now())
+  
+  pptStatus              String   @default("Pending") // ✅ added this
 }
+
+
+
+
 
 model RegisterMasterClass {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -57,9 +84,9 @@ model RegisterMasterClass {
   createdAt    DateTime @default(now())
 }
 
-
 model Login {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   userName String @unique
   password String
+  roleId   String
 }
